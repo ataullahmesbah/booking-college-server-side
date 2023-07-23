@@ -28,8 +28,9 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
 
-        const collegesCollection = client.db('bookingCollege').collection('colleges')
-        const usersCollection = client.db('bookingCollege').collection('users')
+        const collegesCollection = client.db('bookingCollege').collection('colleges');
+        const usersCollection = client.db('bookingCollege').collection('users');
+        const applicationCollection = client.db('bookingCollege').collection('application');
 
 
         // colleges relevent apis
@@ -72,6 +73,14 @@ async function run() {
                 res.status(500).send({ error: 'Failed to create user' });
             }
         });
+
+
+        // student application submit form
+        app.post('/application', async (req, res) => {
+            const applicationForm = req.body;
+            const result = await applicationCollection.insertOne(applicationForm)
+            res.send(result)
+        })
 
 
 
