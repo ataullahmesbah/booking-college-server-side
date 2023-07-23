@@ -82,6 +82,20 @@ async function run() {
             res.send(result)
         })
 
+        // student submit form and show my college page specific user info
+
+        app.get('/application', async (req, res) => {
+            let query = {};
+            if (req.query?.email) {
+                query = { email: req.query.email }
+            }
+            const result = await applicationCollection.find(query).toArray();
+            res.send(result)
+        })
+
+
+
+
 
 
 
