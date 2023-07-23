@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const app = express();
 
@@ -29,6 +29,7 @@ async function run() {
         await client.connect();
 
         const collegesCollection = client.db('bookingCollege').collection('colleges')
+        const usersCollection = client.db('bookingCollege').collection('users')
 
 
         // colleges relevent apis
@@ -40,6 +41,37 @@ async function run() {
             const result = await collegesCollection.find(query).toArray();
             res.send(result)
         })
+
+        // colleges details id
+        app.get('/colleges/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await collegesCollection.findOne(query);
+            res.send(result)
+        })
+
+        // users relevant api
+        app.get('/users', async (req, res) => {
+            const result = await usersCollection.find().toArray()
+            res.send(result)
+        })
+
+        app.post('/users', async (req, res) => {
+            try {
+                const user = req.body;
+                const query = { email: user.email };
+                const existingUser = await usersCollection.findOne(query);
+                if (existingUser) {
+                    return res.send({ message: 'User already exists' });
+                }
+                const saveUser = { name: user.name, email: user.email, img: user.img };
+
+                const result = await usersCollection.insertOne(saveUser);
+                res.send(result);
+            } catch (error) {
+                res.status(500).send({ error: 'Failed to create user' });
+            }
+        });
 
 
 
