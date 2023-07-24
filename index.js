@@ -31,6 +31,7 @@ async function run() {
         const collegesCollection = client.db('bookingCollege').collection('colleges');
         const usersCollection = client.db('bookingCollege').collection('users');
         const applicationCollection = client.db('bookingCollege').collection('application');
+        const reviewCollection = client.db('bookingCollege').collection('review');
 
 
         // colleges relevent apis
@@ -90,6 +91,19 @@ async function run() {
                 query = { email: req.query.email }
             }
             const result = await applicationCollection.find(query).toArray();
+            res.send(result)
+        });
+
+        // review submit form
+        app.post('/review', async (req, res) => {
+            const reviewForm = req.body;
+            const result = await reviewCollection.insertOne(reviewForm)
+            res.send(result)
+        })
+
+        // ui review show
+        app.get('/review', async (req, res) => {
+            const result = await reviewCollection.find().toArray()
             res.send(result)
         })
 
